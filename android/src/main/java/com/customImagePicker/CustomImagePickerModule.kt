@@ -13,8 +13,9 @@ import java.util.Date
 import java.util.Locale
 import com.facebook.react.bridge.*
 
-class CustomImagePickerModule(private val reactContext: ReactApplicationContext) :
-  ReactContextBaseJavaModule(reactContext), ActivityEventListener {
+class CustomImagePickerModule(
+  private val reactContext: ReactApplicationContext
+) : ReactContextBaseJavaModule(reactContext), ActivityEventListener{
 
   private var promise: Promise? = null
   private var cameraImageUri: Uri? = null
@@ -34,7 +35,7 @@ class CustomImagePickerModule(private val reactContext: ReactApplicationContext)
 
   @ReactMethod
   fun pickImage(promise: Promise) {
-    val activity = currentActivity ?: run {
+    val activity = getCurrentActivity() ?: run {
       promise.reject("NO_ACTIVITY", "No activity")
       return
     }
@@ -57,7 +58,7 @@ class CustomImagePickerModule(private val reactContext: ReactApplicationContext)
 
   @ReactMethod
 fun takePhoto(promise: Promise) {
-  val activity = currentActivity ?: run {
+  val activity = getCurrentActivity() ?: run {
     promise.reject("NO_ACTIVITY", "No activity")
     return
   }
@@ -93,11 +94,11 @@ fun takePhoto(promise: Promise) {
 }
 
   override fun onActivityResult(
-    activity: Activity?,
-    requestCode: Int,
-    resultCode: Int,
-    data: Intent?
-  ) {
+  activity: Activity,
+  requestCode: Int,
+  resultCode: Int,
+  data: Intent?
+) {
     val promise = this.promise ?: return
 
     if (resultCode != Activity.RESULT_OK) {
@@ -135,7 +136,8 @@ fun takePhoto(promise: Promise) {
     return File.createTempFile("JPEG_${timeStamp}_", ".jpg", storageDir)
     }
 
-  override fun onNewIntent(intent: Intent?) {}
-
+  override fun onNewIntent(intent: Intent) {
+  // required but unused
+    }
   
 }
