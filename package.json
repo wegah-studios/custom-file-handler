@@ -1,0 +1,11 @@
+{
+  "name": "custom-image-picker",
+  "version": "0.0.1",
+  "main": "index.js",
+  "types": "index.d.ts",
+  "license": "MIT",
+  "peerDependencies": {
+    "react": ">=16.8.0",
+    "react-native": ">=0.60.0"
+  }
+}
