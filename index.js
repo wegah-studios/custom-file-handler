@@ -18,17 +18,27 @@ const CustomFileHandler = NativeModules.CustomFileHandler
       },
     );
 
-export function pickDocument(type) {
-  CustomFileHandler.pickDocument(type);
+function ensureAndroid() {
+  if (Platform.OS !== "android") {
+    throw new Error("custom-file-handler works only on Android");
+  }
 }
-export function saveFile(uri) {
-  CustomFileHandler.saveFile(uri);
+
+export async function pickDocument(type) {
+  ensureAndroid();
+  return CustomTest.pickDocument(type);
 }
-export function pickImage() {
-  CustomFileHandler.pickImage();
+export async function saveFile(uri) {
+  ensureAndroid();
+  return CustomTest.saveFile(uri);
+}
+export async function pickImage() {
+  ensureAndroid();
+  return CustomTest.pickImage();
 }
 export function takePhoto() {
-  CustomFileHandler.takePhoto();
+  ensureAndroid();
+  return CustomTest.takePhoto();
 }
 
 export default {

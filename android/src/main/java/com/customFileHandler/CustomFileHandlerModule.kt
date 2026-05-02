@@ -365,6 +365,7 @@ class CustomFileHandlerModule(
     }
 
     when (requestCode) {
+
       REQUEST_PICK_IMAGE -> {
         val uri: Uri? = data?.data
         if (uri != null) {
