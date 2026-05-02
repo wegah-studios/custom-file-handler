@@ -14,7 +14,7 @@ import java.util.Locale
 import java.util.LinkedList
 import com.facebook.react.bridge.*
 
-class CustomFileHandler(
+class CustomFileHandlerModule(
   private val reactContext: ReactApplicationContext
 ) : ReactContextBaseJavaModule(reactContext), ActivityEventListener{
 
@@ -92,7 +92,7 @@ class CustomFileHandler(
     }
   }
 
-  fun pickDocumentWorker(type: String, promise: Promise){
+  fun pickDocumentWorker(fileType: String, promise: Promise){
     val activity = getCurrentActivity() ?: run {
       promise.reject("NO_ACTIVITY", "No activity")
       finishPromise()
@@ -102,7 +102,7 @@ class CustomFileHandler(
 
     this.promise = promise
 
-    val mimeTypes = when (type.lowercase()) {
+    val mimeTypes = when (fileType.lowercase()) {
       "pdf" -> arrayOf("application/pdf")
 
       "zip" -> arrayOf(
@@ -115,7 +115,7 @@ class CustomFileHandler(
       )
 
       else -> {
-        promise.reject("INVALID_TYPE", "Unsupported type: $type")
+        promise.reject("INVALID_TYPE", "Unsupported type: $fileType")
         finishPromise()
         
         return
@@ -368,18 +368,20 @@ class CustomFileHandler(
       REQUEST_PICK_IMAGE -> {
         val uri: Uri? = data?.data
         if (uri != null) {
-          reactApplicationContext.contentResolver.takePersistableUriPermission(
-            uri,
-            Intent.FLAG_GRANT_READ_URI_PERMISSION
-          )
+          try {
+            reactApplicationContext.contentResolver.takePersistableUriPermission(
+              uri,
+              Intent.FLAG_GRANT_READ_URI_PERMISSION
+            )
+          } catch (e: Exception) {
+              // Ignore if persistable permission isn't supported for this URI
+          }
           promise.resolve(getUriInfo(uri))
           finishPromise()
         } else {
           promise.reject("NO_IMAGE", "No image selected")
-        finishPromise()
-        
-      }
-
+          finishPromise()
+        }
       }
 
       REQUEST_TAKE_PHOTO -> {
@@ -389,7 +391,7 @@ class CustomFileHandler(
           
         } else {
             promise.reject("NO_IMAGE", "Image capture failed")
-        finishPromise()
+            finishPromise()
         }
 
       }
