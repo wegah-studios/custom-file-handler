@@ -1,6 +1,6 @@
 declare module "custom-file-handler" {
   export type Filetype = "pdf" | "xlsx" | "zip";
-  export type FileInfo = { uri: string; name: string; mime: string };
+  export type FileInfo = { uri: string; name: string; mime: string, originalUri:string };
 
   export function pickDocument(type: Filetype): Promise<FileInfo>;
   export function saveFile(uri: string): Promise<FileInfo>;

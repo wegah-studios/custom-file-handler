@@ -78,11 +78,32 @@ class CustomFileHandlerModule(
       }
     }
 
+    val localUri = copyToCache(uri)
+
     return Arguments.createMap().apply {
-      putString("uri", uri.toString())
+      putString("uri", localUri.toString())
+      putString("originalUri", uri.toString())
       putString("mime", mime)
       putString("name", name)
     }
+  }
+
+  private fun copyToCache(uri: Uri): Uri {
+    val resolver = reactApplicationContext.contentResolver
+
+    val inputStream = resolver.openInputStream(uri)
+      ?: throw Exception("Failed to open input stream")
+
+    val fileName = "TMP_${System.currentTimeMillis()}"
+    val file = File(reactApplicationContext.cacheDir, fileName)
+
+    file.outputStream().use { output ->
+      inputStream.use { input ->
+        input.copyTo(output)
+      }
+    }
+
+    return Uri.fromFile(file)
   }
 
   @ReactMethod
@@ -462,9 +483,9 @@ class CustomFileHandlerModule(
 
   @Throws(Exception::class)
     private fun createImageFile(activity: Activity): File {
-    val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(Date())
-    val storageDir = activity.cacheDir
-    return File.createTempFile("JPEG_${timeStamp}_", ".jpg", storageDir)
+      val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(Date())
+      val storageDir = activity.cacheDir
+      return File.createTempFile("JPEG_${timeStamp}_", ".jpg", storageDir)
     }
 
   override fun onNewIntent(intent: Intent) {
