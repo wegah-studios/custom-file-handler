@@ -1,6 +1,6 @@
 module.exports = {
   dependencies: {
-    "custom-image-picker": {
+    "custom-file-handler": {
       root: __dirname,
     },
   },

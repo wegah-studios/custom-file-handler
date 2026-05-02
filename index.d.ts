@@ -1,13 +1,18 @@
-export type ImageResult = {
-  uri: string;
-};
+declare module "custom-file-handler" {
+  export type Filetype = "pdf" | "xlsx" | "zip"
 
-export declare function pickImage(): Promise<string>;
-export declare function takePhoto(): Promise<string>;
+  export function pickDocument(type:Filetype):Promise<string>;
+  export function saveFile(uri:string):Promise<string>;
+  export function pickImage():Promise<string>;
+  export function takePhoto():Promise<string>;
 
-declare const _default: {
-  pickImage: typeof pickImage;
-  takePhoto: typeof takePhoto;
-};
 
-export default _default;
+  const CustomFileHandler: {
+    pickDocument: typeof pickDocument;
+    saveFile: typeof saveFile;
+    pickImage: typeof pickImage;
+    takePhoto: typeof takePhoto;
+  };
+
+  export default CustomFileHandler;
+}

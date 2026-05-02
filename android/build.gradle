@@ -10,7 +10,7 @@ def safeExtGet(prop, fallback) {
 
 
 android {
-    namespace 'com.customImagePicker' 
+    namespace 'com.customFileHandler' 
     compileSdkVersion safeExtGet("compileSdkVersion", 34)
 
     defaultConfig {

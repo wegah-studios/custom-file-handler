@@ -1,6 +1,6 @@
 {
-  "name": "custom-image-picker",
-  "version": "0.0.1",
+  "name": "custom-file-handler",
+  "version": "1.0.0",
   "main": "index.js",
   "types": "index.d.ts",
   "license": "MIT",
