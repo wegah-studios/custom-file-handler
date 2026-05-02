@@ -64,6 +64,27 @@ class CustomFileHandler(
     processNext()
   }
 
+  private fun getUriInfo(uri: Uri): WritableMap {
+    val resolver = reactApplicationContext.contentResolver
+
+    val mime = resolver.getType(uri) ?: "application/octet-stream"
+
+    var name = "unknown"
+
+    resolver.query(uri, null, null, null, null)?.use { cursor ->
+      val nameIndex = cursor.getColumnIndex(android.provider.OpenableColumns.DISPLAY_NAME)
+      if (nameIndex != -1 && cursor.moveToFirst()) {
+        name = cursor.getString(nameIndex)
+      }
+    }
+
+    return Arguments.createMap().apply {
+      putString("uri", uri.toString())
+      putString("mime", mime)
+      putString("name", name)
+    }
+  }
+
   @ReactMethod
   fun pickDocument(type: String, promise: Promise) {
     enqueue {
@@ -198,7 +219,7 @@ class CustomFileHandler(
         contentValues.put(android.provider.MediaStore.Images.Media.IS_PENDING, 0)
         resolver.update(newUri, contentValues, null, null)
 
-        promise.resolve(newUri.toString())
+        promise.resolve(getUriInfo(newUri))
         finishPromise()
           
         return
@@ -351,7 +372,7 @@ class CustomFileHandler(
             uri,
             Intent.FLAG_GRANT_READ_URI_PERMISSION
           )
-          promise.resolve(uri.toString())
+          promise.resolve(getUriInfo(uri))
           finishPromise()
         } else {
           promise.reject("NO_IMAGE", "No image selected")
@@ -363,7 +384,7 @@ class CustomFileHandler(
 
       REQUEST_TAKE_PHOTO -> {
         if (cameraImageUri != null) {
-            promise.resolve(cameraImageUri.toString())
+            promise.resolve(getUriInfo(cameraImageUri!!))
             finishPromise()
           
         } else {
@@ -380,7 +401,7 @@ class CustomFileHandler(
             uri,
             Intent.FLAG_GRANT_READ_URI_PERMISSION
           )
-          promise.resolve(uri.toString())
+          promise.resolve(getUriInfo(uri))
           finishPromise()
           
         } else {
@@ -413,7 +434,7 @@ class CustomFileHandler(
               }
             }
 
-            promise.resolve(uri.toString())
+            promise.resolve(getUriInfo(uri))
             finishPromise()
           
 
