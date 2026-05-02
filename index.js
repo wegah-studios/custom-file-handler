@@ -26,19 +26,19 @@ function ensureAndroid() {
 
 export async function pickDocument(type) {
   ensureAndroid();
-  return CustomTest.pickDocument(type);
+  return CustomFileHandler.pickDocument(type);
 }
 export async function saveFile(uri) {
   ensureAndroid();
-  return CustomTest.saveFile(uri);
+  return CustomFileHandler.saveFile(uri);
 }
 export async function pickImage() {
   ensureAndroid();
-  return CustomTest.pickImage();
+  return CustomFileHandler.pickImage();
 }
 export function takePhoto() {
   ensureAndroid();
-  return CustomTest.takePhoto();
+  return CustomFileHandler.takePhoto();
 }
 
 export default {
