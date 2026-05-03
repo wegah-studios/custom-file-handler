@@ -12,6 +12,7 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 import java.util.LinkedList
+import java.util.UUID
 import com.facebook.react.bridge.*
 
 class CustomFileHandlerModule(
@@ -88,13 +89,17 @@ class CustomFileHandlerModule(
     }
   }
 
+  private fun getUID() {
+    return UUID.randomUUID().toString().replace("-", "")
+  }
+
   private fun copyToCache(uri: Uri): Uri {
     val resolver = reactApplicationContext.contentResolver
 
     val inputStream = resolver.openInputStream(uri)
       ?: throw Exception("Failed to open input stream")
 
-    val fileName = "TMP_${System.currentTimeMillis()}"
+    val fileName = getUID()
     val file = File(reactApplicationContext.cacheDir, fileName)
 
     file.outputStream().use { output ->
@@ -192,7 +197,7 @@ class CustomFileHandlerModule(
         .getExtensionFromMimeType(mimeType)
         ?.let { ".$it" } ?: ""
 
-      val fileName = "FILE_${System.currentTimeMillis()}$extension"
+      val fileName = "${getUID()}$extension"
 
       this.promise = promise
 
@@ -483,9 +488,8 @@ class CustomFileHandlerModule(
 
   @Throws(Exception::class)
     private fun createImageFile(activity: Activity): File {
-      val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(Date())
       val storageDir = activity.cacheDir
-      return File.createTempFile("JPEG_${timeStamp}_", ".jpg", storageDir)
+      return File.createTempFile(getUID(), ".jpg", storageDir)
     }
 
   override fun onNewIntent(intent: Intent) {
