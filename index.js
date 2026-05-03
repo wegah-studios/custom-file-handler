@@ -36,7 +36,7 @@ export async function pickImage() {
   ensureAndroid();
   return CustomFileHandler.pickImage();
 }
-export function takePhoto() {
+export async function takePhoto() {
   ensureAndroid();
   return CustomFileHandler.takePhoto();
 }

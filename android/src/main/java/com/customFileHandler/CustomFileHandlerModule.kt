@@ -117,23 +117,6 @@ class CustomFileHandlerModule(
     return randomUUID().toString().replace("-", "")
   }
 
-  private fun copyToCache(uri: Uri): Uri {
-    val resolver = reactApplicationContext.contentResolver
-
-    val inputStream = resolver.openInputStream(uri)
-      ?: throw Exception("Failed to open input stream")
-
-    val fileName = getUID()
-    val file = File(reactApplicationContext.cacheDir, fileName)
-
-    file.outputStream().use { output ->
-      inputStream.use { input ->
-        input.copyTo(output)
-      }
-    }
-
-    return Uri.fromFile(file)
-  }
 
   @ReactMethod
   fun pickDocument(type: String, promise: Promise) {
