@@ -12,7 +12,7 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 import java.util.LinkedList
-import java.util.UUID
+import java.util.UUID.randomUUID
 import com.facebook.react.bridge.*
 
 class CustomFileHandlerModule(
@@ -70,6 +70,11 @@ class CustomFileHandlerModule(
 
     val mime = resolver.getType(uri) ?: "application/octet-stream"
 
+    // 🔍 Get extension from MIME
+    val extension = android.webkit.MimeTypeMap.getSingleton()
+    .getExtensionFromMimeType(mime)
+    ?.let { ".$it" } ?: ""
+
     var name = "unknown"
 
     resolver.query(uri, null, null, null, null)?.use { cursor ->
@@ -79,18 +84,37 @@ class CustomFileHandlerModule(
       }
     }
 
-    val localUri = copyToCache(uri)
+    // 🧠 Prefer original extension if available
+    val finalExtension = when {
+      name?.contains(".") == true -> name!!.substringAfterLast(".", "")
+        .let { ".$it" }
+      else -> extension
+    }
+
+    val inputStream = resolver.openInputStream(uri)
+      ?: throw Exception("Failed to open input stream")
+
+    val cacheFileName = "${getUID()}$finalExtension"
+    val file = File(reactApplicationContext.cacheDir, cacheFileName)
+
+    file.outputStream().use { output ->
+      inputStream.use { input ->
+        input.copyTo(output)
+      }
+    }
+
+    val cacheUri = Uri.fromFile(file)
 
     return Arguments.createMap().apply {
-      putString("uri", localUri.toString())
+      putString("uri", cacheUri.toString())
       putString("originalUri", uri.toString())
       putString("mime", mime)
       putString("name", name)
     }
   }
 
-  private fun getUID() {
-    return UUID.randomUUID().toString().replace("-", "")
+  private fun getUID(): String {
+    return randomUUID().toString().replace("-", "")
   }
 
   private fun copyToCache(uri: Uri): Uri {
