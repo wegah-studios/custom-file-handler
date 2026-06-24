@@ -263,7 +263,9 @@ class CustomFileHandlerModule(
         "application/pdf",
         "application/zip",
         "application/x-zip-compressed",
-        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        "text/plain",
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
       )
 
       if (!allowedMimeTypes.contains(mimeType)) {
