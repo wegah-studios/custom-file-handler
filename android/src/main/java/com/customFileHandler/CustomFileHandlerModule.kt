@@ -147,6 +147,15 @@ class CustomFileHandlerModule(
         "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
       )
 
+      "txt" -> arrayOf(
+        "text/plain"
+      )
+      
+      "doc" -> arrayOf(
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+      )
+      
+
       else -> {
         promise.reject("INVALID_TYPE", "Unsupported type: $fileType")
         finishPromise()
@@ -258,7 +267,6 @@ class CustomFileHandlerModule(
         return
       }
 
-      // 📄 DOCUMENT FLOW (pdf, zip, xlsx only)
       val allowedMimeTypes = setOf(
         "application/pdf",
         "application/zip",
